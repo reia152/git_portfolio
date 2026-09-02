@@ -1,0 +1,9 @@
+.env
+app/build/
+app/.gradle/
+mysql/
+media/
+app/bin/
+app/.classpath
+app/.project
+app/.settings/
