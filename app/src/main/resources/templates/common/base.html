@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!-- Thymeleaf と Layout Dialect の名前空間を宣言 -->
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <!-- layout:title-pattern：ここでは $CONTENT_TITLE のみを指定しているため、予期しない
+         組み合わせを避けたい場合は $CONTENT_TITLE - $LAYOUT_TITLE のように子テンプレート側で調整する -->
+    <title layout:title-pattern="$CONTENT_TITLE">My App</title>
+    <!-- 共通css -->
+    <link rel="stylesheet" th:href="@{/css/common/base.css}" />
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.4.0 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+    <!-- ページ毎のcssを読み込む（layout:fragment：子テンプレートで上書きできるブロック） -->
+    <th:block layout:fragment="extra_css"></th:block>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div>My App</div>
+        <!-- sec:authorize：ログイン状態によって表示を切り替える -->
+        <div sec:authorize="isAuthenticated()">
+            <a href="#">ログアウト</a>  <!-- ログイン画面へのリンク（ログイン画面はまだ未実装のため仮） -->
+        </div>
+    </header>
+    <!-- サイドバーの組み込み（th:replaceでcommon/sidebarフラグメントを呼ぶ）は次の
+         「サイドバー」タスクで行う。sidebar.htmlがまだ存在しないため、この時点でth:replaceを
+         書くとテンプレートが見つからずエラーになる -->
+    <!-- メインコンテンツ -->
+    <main>
+        <!-- 子テンプレートで content ブロックの内容を定義する -->
+        <th:block layout:fragment="content"></th:block>
+    </main>
+    <script th:src="@{/js/common/sidebar.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ページ毎のjsを読み込む -->
+    <th:block layout:fragment="extra_js"></th:block>
+</body>
+</html>

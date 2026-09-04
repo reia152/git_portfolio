@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- layout:decorate : common/base.html を親テンプレートとして使用する -->
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/base}">
+<head>
+    <!-- layout:fragmentで包まない素の<link>にする。Layout Dialectはcontent側<head>を
+         layoutの<head>にマージするため、子テンプレート側でextra_cssを再定義しても消えない -->
+    <link rel="stylesheet" th:href="@{/css/common/card.css}">
+</head>
+<body>
+    <!-- layout:fragment="content" : base.html の content ブロックにこの内容を挿入する -->
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card">
+                        <!-- card_title ブロック：子テンプレートでカードタイトルを定義する -->
+                        <th:block layout:fragment="card_title">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <!-- title ブロック：子テンプレートでページタイトルを設定する -->
+                                    <th:block layout:fragment="title"></th:block>
+                                </h5>
+                            </div>
+                        </th:block>
+                        <div class="card-body">
+                            <!-- card_body ブロック：子テンプレートでカード本体の内容を定義する -->
+                            <th:block layout:fragment="card_body"></th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- トースト用ブロック -->
+        <th:block layout:fragment="card_toast"></th:block>
+    </div>
+    <!-- extra_js ブロック：子テンプレートで追加のJSを読み込む -->
+    <th:block layout:fragment="extra_js"></th:block>
+</body>
+</html>

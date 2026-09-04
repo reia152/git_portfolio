@@ -1,0 +1,38 @@
+html {
+  font-family: "M PLUS Rounded 1c", sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+header {
+  background-color: rgb(54, 29, 122);
+  color: white;
+  padding: 16px 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1001;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  box-sizing: border-box;
+  border-bottom: 5px solid #ccc;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header a {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 16px;
+}
+
+main {
+  padding: 80px 20px 20px;
+  min-height: 100vh;
+  background-color: rgb(244, 244, 244);
+}

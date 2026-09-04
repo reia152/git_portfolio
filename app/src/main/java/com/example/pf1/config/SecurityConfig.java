@@ -15,11 +15,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                // /media/** は未ログインでも閲覧できる /profile/list, /profile/detail がそれを使うため
-                // /error も許可しないと、Spring Security 6の既定ではERRORディスパッチも認可対象になり、
-                // エラー発生がエラー画面ではなく/loginへのリダイレクトになってしまい、エラー内容が分からなくなる
-                .requestMatchers("/login", "/error", "/media/**", "/profile/list/**", "/profile/detail/**").permitAll()
+        .authorizeHttpRequests(auth -> auth
+        	    // /media/** は未ログインでも閲覧できる /profile/list, /profile/detail がそれを使うため
+        	    // /css/**, /js/**, /img/** も静的リソースなので未ログインで許可する
+        		.requestMatchers("/media/**", "/css/**", "/js/**", "/img/**", "/error").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
