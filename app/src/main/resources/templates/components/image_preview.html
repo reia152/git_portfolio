@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- th:fragment="imagePreview"：他のテンプレートから th:replace で呼び出せるようにする -->
+<!-- createMode：アカウント追加画面（true）かプロフィール編集画面（false/null）かを判定する引数 -->
+<!-- CSRFトークンは呼び出し元の <form th:action="..."> がThymeleafの機能で自動付与するため、この部品では何もしなくてよい -->
+<div th:fragment="imagePreview(createMode, imageNotFound, currentUser, profileImageError)">
+  <link rel="stylesheet" th:href="@{/css/components/image_preview.css}">
+  <label class="form-label">プロフィール画像</label>
+  <div class="form-group">
+    <div class="d-flex justify-content-center align-items-start flex-wrap gap-4 mb-4 full-width-preview-area">
+      <!-- ログイン済みかつ作成モードでない場合：現在の画像を表示 -->
+      <div th:if="${#authorization.expression('isAuthenticated()') and !createMode}" class="image-box-wrapper">
+        <div class="image-box-label">現在</div>
+        <div class="image-box text-center">
+          <p th:if="${imageNotFound}" class="text-muted">画像未登録</p>
+          <img th:unless="${imageNotFound or currentUser.profileImage == null or currentUser.profileImage.isEmpty()}"
+               th:src="@{${'/media/' + currentUser.profileImage}}"
+               alt="現在のプロフィール画像"
+               class="preview-img"
+               id="current-preview" />
+          <p th:if="${!imageNotFound and (currentUser.profileImage == null or currentUser.profileImage.isEmpty())}"
+             class="text-muted">画像未登録</p>
+        </div>
+      </div>
+      <!-- 矢印アイコン -->
+      <div th:if="${#authorization.expression('isAuthenticated()') and !createMode}" class="arrow-box">
+        <span class="arrow-icon">⇒</span>
+      </div>
+      <!-- 変更後プレビュー -->
+      <div class="image-box-wrapper">
+        <div th:if="${#authorization.expression('isAuthenticated()') and !createMode}" class="image-box-label">変更</div>
+        <div th:if="${#authorization.expression('isAuthenticated()') and createMode}" class="image-box-label">プレビュー</div>
+        <div class="image-box text-center">
+          <img id="preview" src="#" alt="変更後の画像プレビュー" class="preview-img" style="display: none" />
+        </div>
+      </div>
+    </div>
+    <!-- 画像ファイルの選択・削除ボタンエリア -->
+    <div class="d-flex align-items-left mb-3">
+      <label for="id_profile_image" class="btn btn-outline-primary mb-0 ms-3">画像を選択</label>
+      <input type="file" name="profileImage" id="id_profile_image" class="d-none">
+      <th:block th:if="${currentUser != null and currentUser.profileImage != null and !currentUser.profileImage.isEmpty() and !createMode}">
+        <label class="btn btn-outline-danger mb-0 ms-3" for="clear-profile-image" id="clear-image-label">画像を削除:OFF</label>
+        <input type="checkbox" class="btn-check" id="clear-profile-image" name="clearProfileImage" value="true" autocomplete="off">
+      </th:block>
+    </div>
+    <div th:if="${profileImageError != null}" class="invalid-feedback d-block" th:text="${profileImageError}"></div>
+  </div>
+</div>
+</body>
+</html>
