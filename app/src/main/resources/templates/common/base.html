@@ -26,7 +26,10 @@
         <div>My App</div>
         <!-- sec:authorize：ログイン状態によって表示を切り替える -->
         <div sec:authorize="isAuthenticated()">
-            <a href="#">ログアウト</a>  <!-- ログイン画面へのリンク（ログイン画面はまだ未実装のため仮） -->
+			<!-- th:action：POSTでログアウトリクエストを送る。CSRF対策のためPOSTを使用 -->
+			<form th:action="@{/logout}" method="post" class="d-inline">
+			  <button type="submit" class="btn btn-link text-white p-0">ログアウト</button>
+			</form>
         </div>
 	</header>
 	<!-- th:replace：sidebar.html の sidebar フラグメントをここに挿入 -->

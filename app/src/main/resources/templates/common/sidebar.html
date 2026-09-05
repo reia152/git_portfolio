@@ -10,7 +10,10 @@
   <!-- サイドバー -->
   <div id="sidebar">
     <a sec:authorize="!isAuthenticated()" href="#">ログイン</a>  <!-- ログイン画面へのリンク(ログイン画面はまだないので#を設定) -->
-    <a sec:authorize="isAuthenticated()" href="#">ログアウト</a>  <!-- ログアウトリンク(まだ#) -->
+	<!-- ログアウトはPOSTが必要なため、フォームで送信する -->
+	<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+	  <button type="submit" class="btn btn-link text-white p-0 d-block text-start">ログアウト</button>
+	</form>
     <a sec:authorize="isAuthenticated()" href="#">プロフィール情報</a>
     <a sec:authorize="isAuthenticated()" href="#">設定</a>
     <a sec:authorize="isAuthenticated()" href="#">アカウント追加</a>

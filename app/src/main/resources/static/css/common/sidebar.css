@@ -12,7 +12,8 @@
   z-index: 1002;
 }
 
-#sidebar a {
+#sidebar a,
+#sidebar form button {
   color: white;
   display: block;
   margin: 10px 0;
