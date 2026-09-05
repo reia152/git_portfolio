@@ -1,0 +1,28 @@
+.toast-container {
+  position: absolute;
+  min-width: 350px;
+  top: 70px;
+  left: 50%;
+  transform: translate(-50%);
+}
+.toast-body {
+  user-select: none;
+}
+
+.toast-success {
+  background-color: #28a745;
+  color: white;
+}
+.toast-error,
+.toast-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.toast-warning {
+  background-color: #ffc107;
+  color: black;
+}
+.toast-info {
+  background-color: #17a2b8;
+  color: white;
+}
