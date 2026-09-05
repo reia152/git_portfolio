@@ -1,5 +1,13 @@
 package com.example.pf1.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Set;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.pf1.dto.SettingsForm;
@@ -104,5 +113,32 @@ public class AccountsController {
             model.addAttribute("flashType", "error");
             return "pf1/user/accounts_setting";
         }
+    }
+    @Value("${app.media.location}")
+    private String mediaLocation;  // application.properties のメディア保存先
+
+    // 拡張子はサーバー側で許可リストと突き合わせる（クライアントが送ってきた文字列をそのまま
+    // ファイルパスに使うと、細工されたファイル名で意図しない場所に書き込まれる恐れがあるため）
+    private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = Set.of(".jpg", ".jpeg", ".png", ".gif", ".webp");
+
+    // プロフィール画像をファイルシステムに保存し、相対パスを返す
+    private String saveProfileImage(MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        String extension = ".jpg";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            String candidate = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            if (ALLOWED_IMAGE_EXTENSIONS.contains(candidate)) {
+                extension = candidate;
+            }
+        }
+        String filename = UUID.randomUUID() + extension;  // ファイル名の重複を避けるためUUIDを使用
+
+        Path uploadDir = Paths.get(mediaLocation, "profile_images");
+        Files.createDirectories(uploadDir);  // フォルダが存在しない場合は作成
+
+        Path filePath = uploadDir.resolve(filename);
+        file.transferTo(filePath);
+
+        return "profile_images/" + filename;  // DB に保存するパス
     }
 }
