@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/card}">
+<head>
+  <title>プロフィール編集</title>
+  <th:block layout:fragment="extra_css">
+    <link rel="stylesheet" th:href="@{/css/components/toast.css}">
+  </th:block>
+</head>
+<body>
+  <th:block layout:fragment="card_toast">
+    <div th:replace="~{components/toast :: toast}"></div>
+  </th:block>
+  <th:block layout:fragment="title">プロフィール編集</th:block>
+  <th:block layout:fragment="card_body">
+    <form th:action="@{/profile/edit}" th:object="${profileEditForm}"
+          method="post" enctype="multipart/form-data" novalidate>
+      <!-- image_preview フラグメントを挿入（編集モード：createMode=false） -->
+      <div th:replace="~{components/image_preview :: imagePreview(false, ${imageNotFound}, ${currentUser}, ${#fields.hasErrors('profileImagePath') ? #fields.errors('profileImagePath')[0] : null})}"></div>
+
+      <div class="mb-3">
+        <label class="form-label">ユーザー名 <span class="text-danger">必須</span></label>
+        <input type="text" th:field="*{username}" class="form-control"
+               th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" />
+        <div th:if="${#fields.hasErrors('username')}" class="invalid-feedback" th:errors="*{username}"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">ふりがな</label>
+        <input type="text" th:field="*{furigana}" class="form-control"
+               th:classappend="${#fields.hasErrors('furigana')} ? 'is-invalid' : ''" />
+        <div th:if="${#fields.hasErrors('furigana')}" class="invalid-feedback" th:errors="*{furigana}"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">性別</label>
+        <select th:field="*{gender}" class="form-select">
+          <option value=""></option>
+          <option th:each="g : ${genderList}" th:value="${g[0]}" th:text="${g[1]}"></option>
+        </select>
+        <div th:if="${#fields.hasErrors('gender')}" class="invalid-feedback d-block" th:errors="*{gender}"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">年齢</label>
+        <input type="number" id="id_age" th:field="*{age}" class="form-control" min="0" max="999"
+               th:classappend="${#fields.hasErrors('age')} ? 'is-invalid' : ''" />
+        <div th:if="${#fields.hasErrors('age')}" class="invalid-feedback" th:errors="*{age}"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">自己紹介</label>
+        <textarea th:field="*{profile}" class="form-control" rows="4"
+                  th:classappend="${#fields.hasErrors('profile')} ? 'is-invalid' : ''"></textarea>
+        <div th:if="${#fields.hasErrors('profile')}" class="invalid-feedback" th:errors="*{profile}"></div>
+      </div>
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-5">保存</button>
+      </div>
+    </form>
+  </th:block>
+  <th:block layout:fragment="extra_js">
+    <script th:src="@{/js/components/age_input_restrictions.js}"></script>
+    <script th:src="@{/js/components/image_preview.js}"></script>
+    <script th:src="@{/js/components/image_clear_btn_control.js}"></script>
+    <script th:src="@{/js/components/toast.js}"></script>
+  </th:block>
+</body>
+</html>
