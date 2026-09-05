@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!-- th:fragment：このブロックを他のテンプレートから th:replace で呼び出せるようにする -->
+<div th:fragment="sidebar">
+  <link rel="stylesheet" th:href="@{/css/common/sidebar.css}" />
+  <!-- サイドバー用のホバー領域 -->
+  <div id="sidebar-hover"></div>
+  <!-- サイドバー -->
+  <div id="sidebar">
+    <a sec:authorize="!isAuthenticated()" href="#">ログイン</a>  <!-- ログイン画面へのリンク(ログイン画面はまだないので#を設定) -->
+    <a sec:authorize="isAuthenticated()" href="#">ログアウト</a>  <!-- ログアウトリンク(まだ#) -->
+    <a sec:authorize="isAuthenticated()" href="#">プロフィール情報</a>
+    <a sec:authorize="isAuthenticated()" href="#">設定</a>
+    <a sec:authorize="isAuthenticated()" href="#">アカウント追加</a>
+    <a href="#">アカウント一覧</a>
+  </div>
+  <!-- オーバーレイ -->
+  <div id="overlay"></div>
+</div>
+</body>
+</html>

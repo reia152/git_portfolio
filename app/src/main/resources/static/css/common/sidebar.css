@@ -1,0 +1,42 @@
+/* サイドバー */
+#sidebar {
+  position: fixed;
+  top: 60px;
+  left: -350px;
+  width: 200px;
+  height: calc(100% - 60px);
+  background-color: rgb(54, 29, 122);
+  color: white;
+  padding: 20px;
+  transition: left 0.8s ease;
+  z-index: 1002;
+}
+
+#sidebar a {
+  color: white;
+  display: block;
+  margin: 10px 0;
+  text-decoration: none;
+}
+
+/* サイドバー領域にホバーすると表示 */
+#sidebar-hover {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 20px;
+  height: calc(100% - 60px);
+  z-index: 1003;
+}
+
+/* オーバーレイ */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 1000;
+}

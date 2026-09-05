@@ -28,11 +28,10 @@
         <div sec:authorize="isAuthenticated()">
             <a href="#">ログアウト</a>  <!-- ログイン画面へのリンク（ログイン画面はまだ未実装のため仮） -->
         </div>
-    </header>
-    <!-- サイドバーの組み込み（th:replaceでcommon/sidebarフラグメントを呼ぶ）は次の
-         「サイドバー」タスクで行う。sidebar.htmlがまだ存在しないため、この時点でth:replaceを
-         書くとテンプレートが見つからずエラーになる -->
-    <!-- メインコンテンツ -->
+	</header>
+	<!-- th:replace：sidebar.html の sidebar フラグメントをここに挿入 -->
+	<div th:replace="~{common/sidebar :: sidebar}"></div>
+	<!-- メインコンテンツ -->
     <main>
         <!-- 子テンプレートで content ブロックの内容を定義する -->
         <th:block layout:fragment="content"></th:block>
