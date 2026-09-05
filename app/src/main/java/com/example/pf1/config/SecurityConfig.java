@@ -18,7 +18,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
         	    // /media/** は未ログインでも閲覧できる /profile/list, /profile/detail がそれを使うため
         	    // /css/**, /js/**, /img/** も静的リソースなので未ログインで許可する
-        		.requestMatchers("/media/**", "/css/**", "/js/**", "/img/**", "/error").permitAll()
+        		.requestMatchers("/media/**", "/css/**", "/js/**", "/img/**", "/error", "/profile/detail/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

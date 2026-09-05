@@ -8,15 +8,18 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.pf1.constants.AccountsFormConstants;
@@ -164,6 +167,27 @@ public class ProfileController {
             return "pf1/user/profile_edit";
         }
     }
+    
+ // プロフィール詳細（ログイン不要）
+ // @PathVariable：URLのパスパラメータを受け取る
+ @GetMapping("/profile/detail/{userId}")
+ public String detailProfile(@PathVariable Long userId, Model model) {
+     // 指定された userId で削除されていないユーザーを取得（存在しない場合は404）
+     Accounts user = accountsRepository.findById(userId)
+         .filter(u -> u.getIsDeleted() == 0)
+         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+     // 性別コードを表示名に変換
+     String genderDisplay = AccountsFormConstants.GENDER_LIST.stream()
+         .filter(g -> g[0].equals(user.getGender()))
+         .map(g -> g[1])
+         .findFirst()
+         .orElse("-");
+
+     model.addAttribute("requestUser", user);
+     model.addAttribute("genderDisplay", genderDisplay);
+     return "pf1/public/profile_detail";
+ }
 
     // プロフィール画像をファイルシステムに保存し、相対パスを返す
     private String saveProfileImage(MultipartFile file) throws IOException {

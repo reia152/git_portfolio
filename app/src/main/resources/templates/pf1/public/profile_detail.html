@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{common/base}">
+<head>
+  <title>プロフィール</title>
+  <th:block layout:fragment="extra_css">
+    <link rel="stylesheet" th:href="@{/css/pf1/public/profile_detail.css}" />
+  </th:block>
+</head>
+<body>
+  <div layout:fragment="content">
+    <div class="container mt-5">
+      <div class="card shadow">
+        <div class="card-header profile-header">
+          <h3 class="mb-0">プロフィール情報</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 text-center mb-3">
+              <img th:if="${requestUser.profileImage != null and !requestUser.profileImage.isEmpty()}"
+                   th:src="@{${'/media/' + requestUser.profileImage}}"
+                   alt="プロフィール画像"
+                   class="profile_image img-fluid rounded border" />
+              <p th:unless="${requestUser.profileImage != null and !requestUser.profileImage.isEmpty()}"
+                 class="text-muted">画像は設定されていません。</p>
+            </div>
+            <div class="col-md-8 mb-3 border-start">
+              <div class="ps-3">
+                <p>
+                  <strong>ユーザー名：</strong>
+                  <span th:text="${requestUser.username}"></span>
+                </p>
+                <p>
+                  <strong>ふりがな：</strong>
+                  <span th:text="${requestUser.furigana != null ? requestUser.furigana : '-'}"></span>
+                </p>
+                <p>
+                  <strong>性別：</strong>
+                  <span th:text="${genderDisplay}"></span>
+                </p>
+                <p>
+                  <strong>年齢：</strong>
+                  <span th:text="${requestUser.age != null ? requestUser.age : '-'}"></span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div>
+            <h5>自己紹介</h5>
+            <!-- th:text：自己紹介文を自動エスケープして出力し、XSS（悪意あるHTML/スクリプトの実行）を防ぐ。
+                 改行の見た目上の反映はCSSのwhite-space: pre-lineに任せる -->
+            <p class="profile-text" th:text="${requestUser.profile != null ? requestUser.profile : '-'}"></p>
+          </div>
+        </div>
+        <!-- カードフッター（「プロフィール編集リンク・一覧へ戻る」タスクで作成） -->
+        <div class="card-footer text-end bg-light">
+          <a th:href="@{/profile/list}" class="btn btn-outline-secondary btn-sm">一覧に戻る</a>
+          <a th:if="${#authorization.expression('isAuthenticated()') and #authentication.principal.userId == requestUser.userId}"
+             th:href="@{/profile/edit}"
+             class="btn btn-primary btn-sm">プロフィールを編集</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
