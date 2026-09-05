@@ -16,7 +16,7 @@
 	</form>
     <a sec:authorize="isAuthenticated()" href="#">プロフィール情報</a>
 	<a sec:authorize="isAuthenticated()" th:href="@{/settings}">設定</a>
-    <a sec:authorize="isAuthenticated()" href="#">アカウント追加</a>
+	<a sec:authorize="isAuthenticated()" th:href="@{/add/general}">アカウント追加</a>
     <a href="#">アカウント一覧</a>
   </div>
   <!-- オーバーレイ -->

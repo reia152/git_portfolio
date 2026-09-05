@@ -15,9 +15,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.pf1.constants.AccountsFormConstants;
+import com.example.pf1.dto.RegistrationForm;
 import com.example.pf1.dto.SettingsForm;
 import com.example.pf1.entity.Accounts;
 import com.example.pf1.messages.ErrorMessages;
@@ -114,6 +117,108 @@ public class AccountsController {
             return "pf1/user/accounts_setting";
         }
     }
+    
+ // GETリクエスト時（アカウント追加フォームの初期表示）
+    @GetMapping("/add/general")
+    public String addGeneralForm(Model model) {
+        model.addAttribute("registrationForm", new RegistrationForm());
+        model.addAttribute("genderList", AccountsFormConstants.GENDER_LIST);
+        return "pf1/user/accounts_add";
+    }
+
+    // POSTリクエスト時（アカウントの登録）
+    @PostMapping("/add/general")
+    public String addGeneral(
+            @Valid @ModelAttribute("registrationForm") RegistrationForm form,
+            BindingResult bindingResult,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        // パスワードのバリデーション（「ユーザーマスタ作成」タスクで作成済みの AccountsValidator）
+        String passwordError = accountsValidator.validatePassword(form.getPassword());
+        if (passwordError != null) {
+            bindingResult.rejectValue("password", "error", passwordError);
+        }
+
+        // パスワード一致チェック
+        String matchError = accountsValidator.validatePasswordMatch(form.getPassword(), form.getPasswordCheck());
+        if (matchError != null) {
+            bindingResult.rejectValue("passwordCheck", "error", matchError);
+        }
+
+        // ふりがなのバリデーション（「バリデーション：ふりがな」タスクで作成済み）
+        if (form.getFurigana() != null && !form.getFurigana().isEmpty()) {
+            String furiganaError = accountsValidator.validateFurigana(form.getFurigana());
+            if (furiganaError != null) {
+                bindingResult.rejectValue("furigana", "error", furiganaError);
+            }
+        }
+
+        // 性別のバリデーション
+        if (form.getGender() != null && !form.getGender().isEmpty()) {
+            String genderError = accountsValidator.validateGender(form.getGender());
+            if (genderError != null) {
+                bindingResult.rejectValue("gender", "error", genderError);
+            }
+        }
+
+        // ユーザー名重複チェック（「バリデーション：ユーザー名」タスクで作成済み）
+        if (form.getUsername() != null && accountsRepository.existsByUsername(form.getUsername())) {
+            bindingResult.rejectValue("username", "error", ErrorMessages.ERROR_USERNAME_EXISTS);
+        }
+
+        // メールアドレス重複チェック
+        if (form.getEmail() != null && accountsRepository.existsByEmail(form.getEmail())) {
+            bindingResult.rejectValue("email", "error", ErrorMessages.ERROR_EMAIL_EXISTS);
+        }
+
+        // 画像サイズチェック（保存はまだしない。「プロフィール画像」タスクで作成済みの saveProfileImage）
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String imageSizeError = accountsValidator.validateProfileImageSize(profileImage.getSize());
+            if (imageSizeError != null) {
+                bindingResult.rejectValue("profileImagePath", "error", imageSizeError);
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("genderList", AccountsFormConstants.GENDER_LIST);
+            model.addAttribute("flashMessage", ErrorMessages.ERROR_REGISTRATION_FAILED);
+            model.addAttribute("flashType", "error");
+            return "pf1/user/accounts_add";
+        }
+
+        try {
+            // 他の全項目の検証を通過してから、ここで初めて画像をディスクに書き込む。
+            // バリデーション前に保存すると、他項目のエラーで戻ったときにどのレコードにも
+            // 紐付かない孤児ファイルがディスクに残り続けてしまうため。
+            String profileImagePath = null;
+            if (profileImage != null && !profileImage.isEmpty()) {
+                profileImagePath = saveProfileImage(profileImage);
+            }
+
+            // ユーザー登録（「ユーザーマスタ作成」タスクで作成済みの AccountsService.createUser）
+            accountsService.createUser(
+                form.getUsername(),
+                form.getPassword(),
+                form.getEmail(),
+                form.getFurigana(),
+                form.getGender(),
+                form.getAge(),
+                form.getProfile(),
+                profileImagePath
+            );
+            redirectAttributes.addFlashAttribute("flashMessage", InfoMessages.INFO_REGISTRATION_SUCCESS);
+            redirectAttributes.addFlashAttribute("flashType", "success");
+            return "redirect:/add/general";
+        } catch (Exception e) {
+            model.addAttribute("genderList", AccountsFormConstants.GENDER_LIST);
+            model.addAttribute("flashMessage", ErrorMessages.ERROR_REGISTRATION_FAILED);
+            model.addAttribute("flashType", "error");
+            return "pf1/user/accounts_add";
+        }
+    }
+
     @Value("${app.media.location}")
     private String mediaLocation;  // application.properties のメディア保存先
 
