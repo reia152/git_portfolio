@@ -1,0 +1,4 @@
+/* Bootstrap標準の.bg-dangerを上書きすると他要素にも影響するため、専用クラス名にする */
+.field-error-bg {
+  background-color: #f7c8c894 !important;
+}

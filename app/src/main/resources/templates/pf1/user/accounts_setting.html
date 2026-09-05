@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!-- card.html を親テンプレートとして使用する -->
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/card}">
+<head>
+  <title>設定画面</title>
+  <th:block layout:fragment="extra_css">
+    <link rel="stylesheet" th:href="@{/css/pf1/user/accounts_setting.css}">
+    <link rel="stylesheet" th:href="@{/css/components/toast.css}">
+    <link rel="stylesheet" th:href="@{/css/components/toggle.css}">
+  </th:block>
+</head>
+<body>
+  <!-- トースト表示 -->
+  <th:block layout:fragment="card_toast">
+    <div th:replace="~{components/toast :: toast}"></div>
+  </th:block>
+  <!-- カードタイトル -->
+  <th:block layout:fragment="title">設定画面</th:block>
+  <!-- カード本文 -->
+  <th:block layout:fragment="card_body">
+    <!-- th:object：フォームのバインド対象オブジェクトを指定 -->
+    <form id="settings-form" th:action="@{/settings}" th:object="${settingsForm}" method="post" novalidate>
+      <!-- CSRF トークンは th:action 使用時に自動挿入 -->
+      <div class="mb-3">
+        <label class="form-label">ユーザー名 <span class="text-danger">必須</span></label>
+        <input type="text" th:field="*{username}" class="form-control"
+               th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''" />
+        <div th:if="${#fields.hasErrors('username')}" class="invalid-feedback" th:errors="*{username}"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">メールアドレス <span class="text-danger">必須</span></label>
+        <input type="email" th:field="*{email}" class="form-control"
+               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" />
+        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}"></div>
+      </div>
+      <div class="mb-3 position-relative">
+        <label class="form-label">パスワード</label>
+        <input type="password" id="id_password" th:field="*{password}" class="form-control"
+               autocomplete="new-password"
+               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" />
+        <!-- toggle フラグメントを挿入（パスワード表示切替ボタン） -->
+        <div th:replace="~{components/toggle :: toggle('id_password')}"></div>
+        <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback" th:errors="*{password}"></div>
+      </div>
+      <div class="text-end mt-3">
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </form>
+  </th:block>
+  <th:block layout:fragment="extra_js">
+    <script th:src="@{/js/pf1/user/accounts_setting.js}"></script>
+    <script th:src="@{/js/components/toast.js}"></script>
+    <script th:src="@{/js/components/toggle.js}"></script>
+  </th:block>
+</body>
+</html>
