@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- fieldId：対象のinput要素のID（呼び出し元から渡す） -->
+<th:block th:fragment="toggle(fieldId)">
+  <span class="toggle-password" th:attr="data-target='#' + ${fieldId}">
+    <!-- fas：Font Awesome 6 の実体（solid）スタイルを指定するプレフィックス。fa-eyeだけでは文字化けして表示されない -->
+    <i class="fas fa-eye show-icon"></i>
+    <i class="fas fa-eye-slash d-none hide-icon"></i>
+  </span>
+</th:block>
+</body>
+</html>

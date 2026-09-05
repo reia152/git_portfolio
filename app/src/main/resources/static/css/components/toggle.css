@@ -1,0 +1,21 @@
+.toggle-password {
+  position: absolute;
+  top: 44px;
+  right: 11px;
+  cursor: pointer;
+}
+/* アイコンの色は show-icon/hide-icon に限定して当てる（.fa/.fas 等の汎用クラスに直接当てると、他の場所でアイコンを使ったときに意図せず上書きしてしまうため） */
+.toggle-password .show-icon,
+.toggle-password .hide-icon {
+  color: darkgray;
+}
+.validated-id-password {
+  right: 30px;
+}
+
+form.no-label .toggle-password {
+  position: absolute;
+  top: 12px;
+  right: 11px;
+  cursor: pointer;
+}
