@@ -1,0 +1,21 @@
+.bg-danger {
+  background-color: #f7c8c894 !important;
+}
+.login-container {
+  width: 360px;
+}
+#id_username {
+  font-family: "M PLUS Rounded 1c", sans-serif;
+}
+#id_username::placeholder {
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-size: 14px;
+}
+#id_password {
+  margin-top: 1rem;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+}
+#id_password::placeholder {
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-size: 14px;
+}

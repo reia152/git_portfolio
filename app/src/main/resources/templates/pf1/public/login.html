@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!-- layout:decorate：common/base.html を親テンプレートとして使用する -->
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/base}">
+<head>
+  <title>Login</title>
+  <th:block layout:fragment="extra_css">
+    <link rel="stylesheet" th:href="@{/css/pf1/public/login.css}" />
+    <link rel="stylesheet" th:href="@{/css/components/toast.css}">
+    <link rel="stylesheet" th:href="@{/css/components/toggle.css}">
+  </th:block>
+</head>
+<body>
+  <div layout:fragment="content">
+    <div class="d-flex justify-content-center">
+      <div class="login-container text-center mt-5">
+        <!-- th:action：CSRF トークンを自動付与してフォームを POST する -->
+        <!-- Spring Security の loginProcessingUrl="/login" に POST される -->
+        <!-- novalidate：ブラウザ標準の必須チェックUIを止め、login.js側の独自チェック（赤背景表示）に委ねる -->
+        <!-- required：login.js が対象の入力欄を querySelectorAll("input[required]") で取得するために必須 -->
+        <form id="login-form" class="no-label" th:action="@{/login}" method="post" novalidate>
+          <div>
+            <input type="text" id="id_username" name="username" class="form-control" placeholder="ユーザー名" autocomplete="username" required />
+          </div>
+          <div class="position-relative">
+            <input type="password" id="id_password" name="password" class="form-control mt-2" placeholder="パスワード" autocomplete="current-password" required />
+            <!-- th:replace：toggle.html の toggle フラグメントを挿入 -->
+            <div th:replace="~{components/toggle :: toggle('id_password')}"></div>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">ログイン</button>
+        </form>
+      </div>
+    </div>
+    <!-- トースト表示（ログイン失敗メッセージなど） -->
+    <div th:replace="~{components/toast :: toast}"></div>
+  </div>
+  <th:block layout:fragment="extra_js">
+    <script th:src="@{/js/components/toggle.js}"></script>
+    <script th:src="@{/js/components/toast.js}"></script>
+    <script th:src="@{/js/pf1/public/login.js}"></script>
+  </th:block>
+</body>
+</html>

@@ -9,7 +9,7 @@
   <div id="sidebar-hover"></div>
   <!-- サイドバー -->
   <div id="sidebar">
-    <a sec:authorize="!isAuthenticated()" href="#">ログイン</a>  <!-- ログイン画面へのリンク(ログイン画面はまだないので#を設定) -->
+	<a sec:authorize="!isAuthenticated()" th:href="@{/login}">ログイン</a>
 	<!-- ログアウトはPOSTが必要なため、フォームで送信する -->
 	<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
 	  <button type="submit" class="btn btn-link text-white p-0 d-block text-start">ログアウト</button>
