@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/base}">
+<head>
+  <title>アカウント一覧</title>
+  <th:block layout:fragment="extra_css">
+    <link rel="stylesheet" th:href="@{/css/pf1/public/profile_list.css}" />
+  </th:block>
+</head>
+<body>
+  <div layout:fragment="content">
+    <div class="container mt-5">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h4 class="mb-0">アカウント一覧</h4>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <!-- th:each：コントローラーから渡された users をループ処理 -->
+            <li th:each="u : ${users}" class="list-group-item">
+              <div class="d-flex align-items-center">
+                <!-- プロフィール画像 -->
+                <img th:if="${u.profileImage != null and !u.profileImage.isEmpty()}"
+                     th:src="@{${'/media/' + u.profileImage}}"
+                     alt="プロフィール画像"
+                     class="rounded me-3"
+                     style="width: 60px; height: 60px; object-fit: cover; flex-shrink: 0;">
+                <div th:unless="${u.profileImage != null and !u.profileImage.isEmpty()}"
+                     class="bg-secondary text-white text-center rounded me-3 d-flex align-items-center justify-content-center"
+                     style="width: 60px; height: 60px; font-size: 12px; flex-shrink: 0;">NO IMAGE</div>
+                <!-- 名前とリンク -->
+                <div class="flex-grow-1">
+                  <!-- @{/profile/detail/{id}(id=...)}：パスパラメータを使ったURL生成 -->
+                  <a th:href="@{/profile/detail/{id}(id=${u.userId})}">
+                    <span class="fw-bold" th:text="${u.username}"></span>
+                  </a>
+                </div>
+              </div>
+            </li>
+            <!-- th:if="${#lists.isEmpty(users)}"：リストが空の場合に表示 -->
+            <li th:if="${#lists.isEmpty(users)}" class="list-group-item text-muted">表示するアカウントがありません。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

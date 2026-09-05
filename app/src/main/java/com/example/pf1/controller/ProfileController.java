@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.pf1.constants.AccountsFormConstants;
+import com.example.pf1.constants.AccountsValues;
 import com.example.pf1.dto.ProfileEditForm;
 import com.example.pf1.entity.Accounts;
 import com.example.pf1.messages.ErrorMessages;
@@ -188,6 +189,14 @@ public class ProfileController {
      model.addAttribute("genderDisplay", genderDisplay);
      return "pf1/public/profile_detail";
  }
+
+//アカウント一覧（ログイン不要）
+@GetMapping("/profile/list")
+public String listProfile(Model model) {
+  // is_deleted=0のレコードをフィルタリングし、usernameでソートして取得
+  model.addAttribute("users", accountsRepository.findByIsDeletedOrderByUsername(AccountsValues.IS_DELETED_FALSE));
+  return "pf1/public/profile_list";
+}
 
     // プロフィール画像をファイルシステムに保存し、相対パスを返す
     private String saveProfileImage(MultipartFile file) throws IOException {
