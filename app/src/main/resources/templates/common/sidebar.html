@@ -14,7 +14,9 @@
 	<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
 	  <button type="submit" class="btn btn-link text-white p-0 d-block text-start">ログアウト</button>
 	</form>
-    <a sec:authorize="isAuthenticated()" href="#">プロフィール情報</a>
+	<!-- #authentication：thymeleaf-extras-springsecurityが提供する式オブジェクト。ログイン中ユーザーのIDをURLパラメータとして使用（sec:authenticationという別属性ではない） -->
+	<a sec:authorize="isAuthenticated()"
+	   th:href="@{/profile/detail/{id}(id=${#authentication.principal.userId})}">プロフィール情報</a>
 	<a sec:authorize="isAuthenticated()" th:href="@{/settings}">設定</a>
 	<a sec:authorize="isAuthenticated()" th:href="@{/add/general}">アカウント追加</a>
     <a href="#">アカウント一覧</a>
