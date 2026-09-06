@@ -19,7 +19,7 @@
 	   th:href="@{/profile/detail/{id}(id=${#authentication.principal.userId})}">プロフィール情報</a>
 	<a sec:authorize="isAuthenticated()" th:href="@{/settings}">設定</a>
 	<a sec:authorize="isAuthenticated()" th:href="@{/add/general}">アカウント追加</a>
-    <a href="#">アカウント一覧</a>
+	<a th:href="@{/profile/list}">アカウント一覧</a>
   </div>
   <!-- オーバーレイ -->
   <div id="overlay"></div>
