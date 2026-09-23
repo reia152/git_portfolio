@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.pf1.constants.AccountsFormConstants;
 import com.example.pf1.constants.AccountsLabel;
+import com.example.pf1.constants.AccountsValues;
 import com.example.pf1.messages.ErrorMessages;
 
 @Component
@@ -33,6 +34,22 @@ public class AccountsValidator {
     public String validateGender(String value) {
         if (value != null && !value.isEmpty() && !value.matches("[MFO]")) {
             return ErrorMessages.ERROR_GENDER_CODE;
+        }
+        return null;
+    }
+    
+    // ステータスコードが ACTIVE/INACTIVE のいずれかかを検証する
+    public String validateStatus(Integer value) {
+        if (value != null && value != AccountsValues.STATUS_ACTIVE && value != AccountsValues.STATUS_INACTIVE) {
+            return ErrorMessages.ERROR_STATUS_CODE;
+        }
+        return null;
+    }
+
+    // 権限コードが ADMIN/GENERAL のいずれかかを検証する
+    public String validatePermissions(Integer value) {
+        if (value != null && value != AccountsValues.PERMISSIONS_ADMIN && value != AccountsValues.PERMISSIONS_GENERAL) {
+            return ErrorMessages.ERROR_PERMISSIONS_CODE;
         }
         return null;
     }

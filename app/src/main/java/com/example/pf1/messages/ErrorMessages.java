@@ -1,6 +1,8 @@
 package com.example.pf1.messages;
 
 public class ErrorMessages {
+    public static final String ERROR_STATUS_CODE = "0, 1で設定してください。";
+    public static final String ERROR_PERMISSIONS_CODE = "0, 1で設定してください。";
     public static final String ERROR_REQUIRED = "%sは必須です";
     public static final String ERROR_INVALID_RANGE = "%sは%d〜%dで設定してください。";
     public static final String ERROR_MAX_LENGTH = "%sは%d文字以内で設定してください。";
