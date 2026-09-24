@@ -11,6 +11,7 @@ public class ErrorMessages {
     public static final String ERROR_IMAGE_SIZE = "プロフィール画像のサイズは2MB以内で設定してください。";
     public static final String ERROR_PASSWORD_FORMAT = "パスワードは半角英数字と_-のみ使用してください。";
     public static final String ERROR_LOGIN_FAILED = "ログインに失敗しました。";
+    public static final String ERROR_ACCOUNT_DISABLED = "アカウントが無効です。";
     public static final String ERROR_PASSWORD_MISMATCH = "確認用パスワードが一致しません";
     public static final String ERROR_REGISTRATION_FAILED = "登録に失敗しました。";
     public static final String ERROR_USERNAME_EXISTS = "このアカウント名は既に使用されています";
