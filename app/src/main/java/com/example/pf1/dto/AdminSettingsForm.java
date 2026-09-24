@@ -12,6 +12,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AdminSettingsForm {
+	
+	// ユーザー名・メールアドレスは必須項目（パスワードのみ任意入力）
+    @NotBlank(message = "ユーザー名は必須です")
+    @Size(max = AccountsFormConstants.USERNAME_MAX_LENGTH, message = "ユーザー名は255文字以内で設定してください。")
+    private String username;
 
     // 必須項目のメールアドレスのみ
     @NotBlank(message = "メールアドレスは必須です")

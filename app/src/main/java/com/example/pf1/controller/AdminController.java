@@ -36,6 +36,7 @@ public class AdminController {
 	@PreAuthorize("hasRole('ADMIN')")
 	public String settingsAdminForm(@AuthenticationPrincipal Accounts user, Model model) {
 		AdminSettingsForm form = new AdminSettingsForm();
+		form.setUsername(user.getUsername());  // 現在の値を初期表示
 		form.setEmail(user.getEmail());
 		form.setPassword("");
 		model.addAttribute("settingsAdminForm", form);
@@ -58,6 +59,11 @@ public class AdminController {
                 bindingResult.rejectValue("password", "error", passwordError);
             }
         }
+        
+        // ユーザー名の重複チェック（自分自身を除外。username は @NotBlank のため null/空文字は考慮不要）
+        if (accountsRepository.existsByUsernameAndUserIdNot(form.getUsername(), user.getUserId())) {
+            bindingResult.rejectValue("username", "error", ErrorMessages.ERROR_USERNAME_EXISTS);
+        }
 
 		// メールアドレスの重複チェック（自分自身を除外。email も @NotBlank のため同様）
 		if (accountsRepository.existsByEmailAndUserIdNot(form.getEmail(), user.getUserId())) {
@@ -76,9 +82,10 @@ public class AdminController {
             // そのため必ずDBから最新のエンティティを取り直し、そちらだけを書き換えて保存する。
 			Accounts current = accountsRepository.findById(user.getUserId()).orElseThrow();
 			
-			// メールアドレスは必須項目のため常に反映する
-			current.setEmail(form.getEmail());
-			if (form.getPassword() != null && !form.getPassword().isEmpty()) {
+			// ユーザー名・メールアドレスは必須項目のため常に反映する
+            current.setUsername(form.getUsername());
+            current.setEmail(form.getEmail());
+            if (form.getPassword() != null && !form.getPassword().isEmpty()) {
                 // パスワードはハッシュ化して更新。current には直前にセットしたusername/emailも
                 // 反映済みのため、updatePassword内のaccountsRepository.save(current)でまとめて保存される
                 accountsService.updatePassword(current, form.getPassword());
