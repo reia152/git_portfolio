@@ -13,7 +13,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.pf1.dto.AdminSettingsForm;
 import com.example.pf1.entity.Accounts;
 import com.example.pf1.messages.ErrorMessages;
+import com.example.pf1.messages.InfoMessages;
 import com.example.pf1.repository.AccountsRepository;
+import com.example.pf1.service.AccountsService;
+import com.example.pf1.validator.AccountsValidator;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminController {
 
 	private final AccountsRepository accountsRepository;
+	private final AccountsService accountsService;
+    private final AccountsValidator accountsValidator;
 
 	// GETリクエスト時（設定フォームの初期表示）
 	@GetMapping("/settings/admin")
@@ -32,6 +37,7 @@ public class AdminController {
 	public String settingsAdminForm(@AuthenticationPrincipal Accounts user, Model model) {
 		AdminSettingsForm form = new AdminSettingsForm();
 		form.setEmail(user.getEmail());
+		form.setPassword("");
 		model.addAttribute("settingsAdminForm", form);
 		return "pf1/admin/settings_admin";
 	}
@@ -44,24 +50,48 @@ public class AdminController {
 			@AuthenticationPrincipal Accounts user,
 			RedirectAttributes redirectAttributes,
 			Model model) {
+		
+		// パスワードの長さチェック（任意入力なので空なら検証しない）
+        if (form.getPassword() != null && !form.getPassword().isEmpty()) {
+            String passwordError = accountsValidator.validatePassword(form.getPassword());
+            if (passwordError != null) {
+                bindingResult.rejectValue("password", "error", passwordError);
+            }
+        }
 
 		// メールアドレスの重複チェック（自分自身を除外。email も @NotBlank のため同様）
 		if (accountsRepository.existsByEmailAndUserIdNot(form.getEmail(), user.getUserId())) {
 			bindingResult.rejectValue("email", "error", ErrorMessages.ERROR_EMAIL_EXISTS);
 		}
 		if (bindingResult.hasErrors()) {
+			form.setPassword("");  // 画面再表示時に入力済みパスワードを平文のまま残さない
 			model.addAttribute("flashMessage", ErrorMessages.ERROR_UPDATE_FAILED);
 			model.addAttribute("flashType", "error");
 			return "pf1/admin/settings_admin";
 		}
 
-		try {
+		try {// @AuthenticationPrincipalのuserはログイン時点のスナップショット（セッションに保持されたdetachedな
+            // JPAエンティティ）で、以降の更新は反映されない。これをそのままsave()するとmergeとして働き、
+            // 他の全カラムがログイン時点の値で上書きされてしまう（例: 別セッションでの変更が巻き戻る）。
+            // そのため必ずDBから最新のエンティティを取り直し、そちらだけを書き換えて保存する。
 			Accounts current = accountsRepository.findById(user.getUserId()).orElseThrow();
+			
+			// メールアドレスは必須項目のため常に反映する
 			current.setEmail(form.getEmail());
-			accountsRepository.save(current);
-			return "redirect:/settings/admin";
+			if (form.getPassword() != null && !form.getPassword().isEmpty()) {
+                // パスワードはハッシュ化して更新。current には直前にセットしたusername/emailも
+                // 反映済みのため、updatePassword内のaccountsRepository.save(current)でまとめて保存される
+                accountsService.updatePassword(current, form.getPassword());
+            } else {
+                accountsRepository.save(current);
+            }
+            // 成功メッセージをリダイレクト先に渡す（PRGパターン）
+            redirectAttributes.addFlashAttribute("flashMessage", InfoMessages.INFO_EDIT_SUCCESS);
+            redirectAttributes.addFlashAttribute("flashType", "success");
+            return "redirect:/settings/admin";
 
 		} catch (Exception e) {
+			form.setPassword("");  // 画面再表示時に入力済みパスワードを平文のまま残さない
 			log.error("設定の保存に失敗しました", e);
 			model.addAttribute("flashMessage", ErrorMessages.ERROR_UPDATE_FAILED);
 			model.addAttribute("flashType", "error");

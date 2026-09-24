@@ -4,6 +4,7 @@ import com.example.pf1.constants.AccountsFormConstants;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,5 +18,10 @@ public class AdminSettingsForm {
     @Email(message = "正しいメールアドレス形式で入力してください。")
     @Size(max = AccountsFormConstants.EMAIL_MAX_LENGTH, message = "メールアドレスは255文字以内で設定してください。")
     private String email;
+    
+    // パスワードは任意入力（空欄なら変更しない）ため @NotBlank は付けない
+    @Size(max = AccountsFormConstants.PASSWORD_MAX_LENGTH, message = "パスワードは32文字以内で設定してください。")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]*$", message = "パスワードは半角英数字と_-のみ使用可能です。")
+    private String password;
 
 }
