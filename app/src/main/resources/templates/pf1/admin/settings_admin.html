@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/card}">
+<head>
+  <title>設定画面</title>
+  <th:block layout:fragment="extra_css">
+    <link rel="stylesheet" th:href="@{/css/pf1/admin/settings_admin.css}">
+  </th:block>
+</head>
+<body>
+  <th:block layout:fragment="card_toast">
+    <div th:replace="~{components/toast :: toast}"></div>
+  </th:block>
+  <th:block layout:fragment="title">設定画面</th:block>
+  <th:block layout:fragment="card_body">
+    <form id="settings-admin-form" th:action="@{/settings/admin}" th:object="${settingsAdminForm}" method="post" novalidate>
+      <div class="mb-3">
+        <label class="form-label">メールアドレス <span class="text-danger">必須</span></label>
+        <input type="email" th:field="*{email}" class="form-control"
+               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" />
+        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}"></div>
+      </div>
+      <div class="text-end mt-3">
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </form>
+  </th:block>
+  <th:block layout:fragment="extra_js">
+    <script th:src="@{/js/pf1/admin/settings_admin.js}"></script>
+  </th:block>
+</body>
+</html>
